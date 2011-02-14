@@ -1,0 +1,19 @@
+Sketch: Brain Machine for Arduino
+Author: Chris Sparnicht - http://low.li
+Date: 2011.01.31
+License: Creative Commons 2.5 Attrib. & Share Alike
+
+Derivation and Notes:
+Make sure you have dual wheel potentiometer to reduce
+the volume of the audio with your headset. If you don't, 
+you might damage your ear drums, your arduino or your headset.
+
+This arduino sketch is based on the original Sound & Light Machine 
+by - Mitch Altman - 19-Mar-07 as featured in Make Magazine 10.
+http://makezine.com/10/brainwave/
+
+See notes in code below for how I adapted Mitch Altman's version for Arduino
+
+The sleep coding comes partially from here:
+http://www.arduino.cc/playground/Learning/ArduinoSleepCode
+***************************************************/
