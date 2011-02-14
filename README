@@ -16,4 +16,12 @@ See notes in code below for how I adapted Mitch Altman's version for Arduino
 
 The sleep coding comes partially from here:
 http://www.arduino.cc/playground/Learning/ArduinoSleepCode
-***************************************************/
+***************************************************
+
+I've included a Stereo Eyephone Test sketch 
+and a Stereo Tone Test Sketch. These sketches are purely
+for development purposes, used to confirm preferred programming
+prior to putting it into the Arduino Brain Machine Sketch.
+
+If you're having trouble with Eyephones or Earphones, try
+isolating the cause using one of these simpler sketches.

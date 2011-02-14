@@ -158,6 +158,11 @@ int val = 0;     // val will be used to store the state of the input pin.
 int old_val = 0; // This variable stores the previous value of "val".
 int state = 0;  // 0 = LED off while 1 = LED on
 
+//Blink statuses for function 'blink_LEDs' and 'alt_blink_LEDS
+unsigned long int duration = 0;
+unsigned long int onTime = 0;
+unsigned long int offTime = 0;
+
 
 /***************************************************
   SETUP defines pins and tones.
@@ -194,8 +199,8 @@ void loop() {
   }
  
   // Shut down everything and put the CPU to sleep
-  digitalWrite(rightEyeRed, HIGH);  // common anode - 
-  digitalWrite(leftEyeRed, HIGH);  // HIGH means 'off'
+  analogWrite(rightEyeRed, 255);  // common anode - 
+  analogWrite(leftEyeRed, 255);  // HIGH means 'off'
   rightEar.stop();
   leftEar.stop();  
   
@@ -231,18 +236,31 @@ for common anode, so "on" = LOW and "off" = HIGH.
 
 void blink_LEDs( unsigned long int duration, unsigned long int onTime, unsigned long int offTime) {
   for (int i=0; i<(duration/(onTime+offTime)); i++) {   
-    digitalWrite(rightEyeRed, LOW);  // common anode -
-    digitalWrite(leftEyeRed, LOW);  // LOW means 'on'
+    analogWrite(rightEyeRed, 0);  // common anode -
+    analogWrite(leftEyeRed, 0);  // LOW means 'on'
     // turn on LEDs     
     delay_one_tenth_ms(onTime);   //   for onTime     
     
-    digitalWrite(rightEyeRed, HIGH);  // common anode - 
-    digitalWrite(leftEyeRed, HIGH);  // HIGH means 'off'
+    analogWrite(rightEyeRed, 255);  // common anode - 
+    analogWrite(leftEyeRed, 255);  // HIGH means 'off'
    // turn off LEDs    
     delay_one_tenth_ms(offTime);  //   for offTime   
   } 
 } 
 
+void alt_blink_LEDs( unsigned long int duration, unsigned long int onTime, unsigned long int offTime) {
+  for (int i=0; i<(duration/(onTime+offTime)); i++) {   
+    analogWrite(rightEyeRed, 0);  // common anode -
+    analogWrite(leftEyeRed, 255);  // LOW means 'on'
+    // turn on LEDs     
+    delay_one_tenth_ms(onTime);   //   for onTime     
+    
+    analogWrite(rightEyeRed, 255);  // common anode - 
+    analogWrite(leftEyeRed, 0);  // HIGH means 'off'
+   // turn off LEDs    
+    delay_one_tenth_ms(offTime);  //   for offTime   
+  } 
+} 
 /***************************************************
 This function starts with a central audio frequency and
 splits the difference between two tones
@@ -264,6 +282,15 @@ void do_brainwave_element(int index) {
       blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 347, 347 );
       return;   // Beta
  
+    case 'B':         
+      // Beta - with alternating blinks
+      rightEar.play(centralTone - (binauralBeat[0]/2));
+      leftEar.play(centralTone + (binauralBeat[0]/2));  
+      //  Generate binaural beat of 14.4Hz       
+      //  delay for the time specified in the table while blinking the LEDs at the correct rate       
+      alt_blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 347, 347 );
+      return;   // Beta - with alternating blinks
+ 
     case 'a':
       // Alpha
       rightEar.play(centralTone - (binauralBeat[1]/2));
@@ -272,6 +299,15 @@ void do_brainwave_element(int index) {
       // delay for the time specified in the table while blinking the LEDs at the correct rate
       blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 451, 450 );
       return;   // Alpha
+ 
+    case 'A':
+      // Alpha
+      rightEar.play(centralTone - (binauralBeat[1]/2));
+      leftEar.play(centralTone + (binauralBeat[1]/2));  
+      // Generates a binaural beat of 11.1Hz
+      // delay for the time specified in the table while blinking the LEDs at the correct rate
+      alt_blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 451, 450 );
+      return;   // Alpha - with alternating blinks
  
     case 't':
       // Theta
@@ -284,6 +320,17 @@ void do_brainwave_element(int index) {
       blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 835, 835 );
       return;   // Theta
  
+    case 'T':
+      // Theta
+      // start Timer 1 with the correct Offset Frequency for a binaural beat for the Brainwave Type
+      //   to Right ear speaker through output OC1A (PB3, pin 15)
+      rightEar.play(centralTone - (binauralBeat[2]/2));
+      leftEar.play(centralTone + (binauralBeat[2]/2));  
+      // Generates a binaural beat of 6.0Hz
+      // delay for the time specified in the table while blinking the LEDs at the correct rate
+      alt_blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 835, 835 );
+      return;   // Theta - with alternating blinks
+ 
     case 'd':
       // Delta
       rightEar.play(centralTone - (binauralBeat[3]/2));
@@ -291,6 +338,15 @@ void do_brainwave_element(int index) {
       // Generates a binaural beat of 2.2Hz
       // delay for the time specified in the table while blinking the LEDs at the correct rate
       blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 2253, 2253 );
+      return;   // Delta
+ 
+    case 'D':
+      // Delta
+      rightEar.play(centralTone - (binauralBeat[3]/2));
+      leftEar.play(centralTone + (binauralBeat[3]/2));  
+      // Generates a binaural beat of 2.2Hz
+      // delay for the time specified in the table while blinking the LEDs at the correct rate
+      alt_blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 2253, 2253 );
       return;   // Delta
  
     // this should never be executed, since we catch the end of table in the main loop
