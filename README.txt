@@ -20,6 +20,10 @@ See notes in code below for how I adapted Mitch Altman's version for Arduino
 The sleep coding comes partially from here:
 http://www.arduino.cc/playground/Learning/ArduinoSleepCode
 ***************************************************
+2011.02.20
+Fixed error in breadboard diagram. 
+Added new longer show and gamma frequency (40.4Hz).
+
 2011.02.15
 Added liability notice.
 
