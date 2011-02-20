@@ -72,53 +72,72 @@ pulse in some Delta (creativity)
 and then reverse the above to come up refreshed
 ***************************************************/
 struct brainwaveElement {
-  char bwType;  // 'a' for Alpha, 'b' for Beta, 't' for Theta, or 'd' for Delta ('0' signifies last entry in table
+  char bwType;  // 'a' for Alpha, 'b' for Beta, 't' for Theta,'d' for Delta or 'g' for gamma ('0' signifies last entry in table
+  // A, B, T, D and G offer alternating flash instead of concurrent flash.
   unsigned long int bwDuration;  // Duration of this Brainwave Type (divide by 10,000 to get seconds)
 } const brainwaveTab[] PROGMEM = {
-  { 'b', 600000 },
-  { 'a', 100000 },
-  { 'b', 200000 },
-  { 'a', 150000 },
-  { 'b', 150000 },
-  { 'a', 200000 },
-  { 'b', 100000 },
-  { 'a', 300000 },
-  { 'b',  50000 },
-  { 'a', 600000 },
-  { 't', 100000 },
-  { 'a', 300000 },
-  { 't', 200000 },
-  { 'a', 300000 },
-  { 't', 300000 },
-  { 'a', 150000 },
-  { 't', 600000 },
-  { 'a', 150000 },
-  { 'b',  10000 },
-  { 'a', 150000 },
-  { 't', 600000 },
-  { 'd',  10000 },
-  { 't', 100000 },
-  { 'd',  10000 },
-  { 't', 100000 },
-  { 'd',  10000 },
-  { 't', 300000 },
-  { 'a', 150000 },
-  { 'b',  10000 },
-  { 'a', 150000 },
-  { 't', 300000 },
-  { 'a', 150000 },
-  { 'b',  10000 },
-  { 'a', 200000 },
-  { 'b',  50000 },
-  { 'a', 200000 },
-  { 'b', 150000 },
-  { 'a', 150000 },
-  { 'b', 200000 },
-  { 'a', 100000 },
-  { 'b', 250000 },
-  { 'a',  50000 },
-  { 'b', 600000 },
-  { '0',      0 }
+{ 'b', 600000 },
+{ 'a', 100000 },
+{ 'b', 200000 },
+{ 'a', 150000 },
+{ 'b', 150000 },
+{ 'a', 200000 },
+{ 'b', 100000 },
+{ 'a', 300000 },
+{ 'b', 50000 },
+{ 'a', 600000 },
+{ 't', 100000 },
+{ 'A', 300000 },
+{ 't', 200000 },
+{ 'a', 200000 },
+{ 't', 300000 },
+{ 'A', 150000 },
+{ 't', 600000 },
+{ 'a', 100000 },
+{ 'b', 10000 },
+{ 'a', 50000 },
+{ 'T', 550000 },
+{ 'd', 10000 },
+{ 't', 450000 },
+{ 'd', 50000 },
+{ 'T', 350000 },
+{ 'd', 100000 },
+{ 't', 250000 },
+{ 'd', 150000 },
+{ 'g', 10000 },
+{ 'T', 50000 },
+{ 'g', 10000 },
+{ 'd', 300000 },
+{ 'g', 50000 },
+{ 'd', 600000 },
+{ 'g', 100000 },
+{ 'D', 300000 },
+{ 'g', 50000 },
+{ 'd', 150000 },
+{ 'g', 10000 },
+{ 't', 100000 },
+{ 'D', 100000 },
+{ 't', 200000 },
+{ 'a', 10000 },
+{ 'd', 100000 },
+{ 't', 300000 },
+{ 'a', 50000 },
+{ 'B', 10000 },
+{ 'a', 100000 },
+{ 't', 220000 },
+{ 'A', 150000 },
+{ 'b', 10000 },
+{ 'a', 300000 },
+{ 'b', 50000 },
+{ 'a', 200000 },
+{ 'B', 120000 },
+{ 'a', 150000 },
+{ 'b', 200000 },
+{ 'a', 100000 },
+{ 'b', 250000 },
+{ 'A', 50000 },
+{ 'b', 600000 },
+{ '0', 0 }
 };
 
 
@@ -148,10 +167,10 @@ Isolating the central tone makes it easy for
 the user to choose a preferred frequency base.
 
 ***************************************************/
-float binauralBeat[] = { 14.4, 11.1, 6.0, 2.2 }; // For beta, alpha, gamma and delta beat differences.
+float binauralBeat[] = { 14.4, 11.1, 6.0, 2.2, 40.4 }; // For beta, alpha, gamma and delta beat differences.
 Tone rightEar; 
 Tone leftEar;
-float centralTone = 150; //We're starting at this tone and spreading the binaural beat from there.
+float centralTone = 440.0; //We're starting at this tone and spreading the binaural beat from there.
 
 //Button States below: Still Diagnostic - These values aren't used yet...
 int val = 0;     // val will be used to store the state of the input pin.
@@ -348,6 +367,24 @@ void do_brainwave_element(int index) {
       // delay for the time specified in the table while blinking the LEDs at the correct rate
       alt_blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 2253, 2253 );
       return;   // Delta
+ 
+    case 'g':
+      // Gamma
+      rightEar.play(centralTone - (binauralBeat[4]/2));
+      leftEar.play(centralTone + (binauralBeat[4]/2));  
+      // Generates a binaural beat of 40.4Hz
+      // delay for the time specified in the table while blinking the LEDs at the correct rate
+      blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 124, 124 );
+      return;   // Gamma
+ 
+    case 'G':
+      // Gamma
+      rightEar.play(centralTone - (binauralBeat[4]/2));
+      leftEar.play(centralTone + (binauralBeat[4]/2));  
+      // Generates a binaural beat of 40.4Hz
+      // delay for the time specified in the table while blinking the LEDs at the correct rate
+      alt_blink_LEDs( pgm_read_dword(&brainwaveTab[index].bwDuration), 124, 124 );
+      return;   // Gamma
  
     // this should never be executed, since we catch the end of table in the main loop
     default:
